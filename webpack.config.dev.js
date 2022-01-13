@@ -2,8 +2,6 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin');
-const TerserWebpackPlugin = require('terser-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
 /** @type {import('webpack').Configuration} */
@@ -14,10 +12,11 @@ const configuration = {
   output: {
     //direccion de carpeta de salida
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name][contenthash].js',//archivo JS de salida
-    assetModuleFilename: 'assets/images/[hash][ext]',//salida de imagenes
-    clean: true//limpiar la salida 
+    filename: '[name].js',
+    assetModuleFilename: 'assets/images/[name][ext]'
   },
+  mode: 'development',//modo desarrollo
+  watch: true,//espiar cambios
   resolve: {
     //extensiones que reconocerá webpack
     extensions: [
@@ -56,7 +55,7 @@ const configuration = {
         test: /\.(woff|woff2)$/,//extensiones de los archivos de fuentes
         type: 'asset/resource',//type que se utiliza en webpack
         generator: {
-          filename: 'assets/fonts/[name][contenthash][ext]'//nombre del archivo de salida
+          filename: 'assets/fonts/[name][ext]'//nombre del archivo de salida
         }
       }
     ]
@@ -71,7 +70,7 @@ const configuration = {
     }),
     //mini-css-extract-plugin, se hace require y se instancia
     new MiniCssExtractPlugin({
-      filename: '[name][contenthash].css'//nombre del archivo de salida
+      filename: '[name].css'//nombre del archivo de salida
     }),
     //copy-plugin, se hace require y se instacia
     new CopyPlugin({
@@ -84,14 +83,7 @@ const configuration = {
       ]
     }),
     new Dotenv()
-  ],
-  optimization: {
-    minimize: true,//minimiza JS
-    minimizer: [
-      new CssMinimizerWebpackPlugin(),//minimiza css
-      new TerserWebpackPlugin()
-    ]
-  }
+  ]
 }
 module.exports = {
   ...configuration
